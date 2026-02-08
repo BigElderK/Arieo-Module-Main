@@ -1,5 +1,8 @@
 cmake_minimum_required (VERSION 3.31)
 
+include($ENV{ARIEO_BUILDENV_PACKAGE_INSTALL_FOLDER}/cmake/build_environment.cmake)
+project(ArieoEngine)
+
 if(ARIEO_HOST_OS STREQUAL "android")
     arieo_engine_project(
         arieo_main_module
@@ -9,17 +12,20 @@ if(ARIEO_HOST_OS STREQUAL "android")
             ${CMAKE_CURRENT_SOURCE_DIR}/private/src/*.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/private/src/*/*.cpp
         PACKAGES
+            Arieo-Interface-Main
+            Arieo-Interface-Archive
+            Arieo-Interface-Script
             mimalloc
             game-activity
+            Arieo-Core
         INTERFACES
-            arieo::interface::main
-            arieo::interface::archive
-            arieo::interface::script
-        LIBS
+            Arieo-Interface-Main::arieo_main_interface
+            Arieo-Interface-Archive::arieo_archive_interface
+            Arieo-Interface-Script::arieo_script_interface
+        PRIVATE_LIBS
             arieo::base
             arieo::core
             mimalloc::mimalloc
-
             game-activity::game-activity_static
             log
             android
@@ -34,12 +40,16 @@ else()
             ${CMAKE_CURRENT_SOURCE_DIR}/private/src/*.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/private/src/*/*.cpp
         PACKAGES
+            Arieo-Interface-Main
+            Arieo-Interface-Archive
+            Arieo-Interface-Script
             mimalloc
+            Arieo-Core
         INTERFACES
-            arieo::interface::main
-            arieo::interface::archive
-            arieo::interface::script
-        LIBS
+            Arieo-Interface-Main::arieo_main_interface
+            Arieo-Interface-Archive::arieo_archive_interface
+            Arieo-Interface-Script::arieo_script_interface
+        PRIVATE_LIBS
             arieo::base
             arieo::core
             mimalloc::mimalloc
