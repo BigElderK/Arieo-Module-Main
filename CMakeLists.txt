@@ -6,11 +6,8 @@ project(ArieoEngine)
 if(ARIEO_HOST_OS STREQUAL "android")
     arieo_engine_project(
         arieo_main_module
-        ALIAS arieo::modules::main
         PROJECT_TYPE module
-        SOURCES
-            ${CMAKE_CURRENT_SOURCE_DIR}/private/src/*.cpp
-            ${CMAKE_CURRENT_SOURCE_DIR}/private/src/*/*.cpp
+
         PACKAGES
             Arieo-Interface-Main
             Arieo-Interface-Archive
@@ -23,22 +20,22 @@ if(ARIEO_HOST_OS STREQUAL "android")
             Arieo-Interface-Archive::arieo_archive_interface
             Arieo-Interface-Script::arieo_script_interface
         PRIVATE_LIBS
-            arieo::base
-            arieo::core
+            Arieo-Core::arieo_core
             mimalloc::mimalloc
             game-activity::game-activity_static
             log
             android
+
+        SOURCES
+            ${CMAKE_CURRENT_SOURCE_DIR}/private/src/*.cpp
+            ${CMAKE_CURRENT_SOURCE_DIR}/private/src/*/*.cpp
     )
     set_target_properties(arieo_main_module PROPERTIES LINK_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -u Java_com_google_androidgamesdk_GameActivity_initializeNativeCode")
 else()
     arieo_engine_project(
         arieo_main_module
-        ALIAS arieo::modules::main
         PROJECT_TYPE module
-        SOURCES
-            ${CMAKE_CURRENT_SOURCE_DIR}/private/src/*.cpp
-            ${CMAKE_CURRENT_SOURCE_DIR}/private/src/*/*.cpp
+
         PACKAGES
             Arieo-Interface-Main
             Arieo-Interface-Archive
@@ -50,8 +47,11 @@ else()
             Arieo-Interface-Archive::arieo_archive_interface
             Arieo-Interface-Script::arieo_script_interface
         PRIVATE_LIBS
-            arieo::base
-            arieo::core
+            Arieo-Core::arieo_core
             mimalloc::mimalloc
+
+        SOURCES
+            ${CMAKE_CURRENT_SOURCE_DIR}/private/src/*.cpp
+            ${CMAKE_CURRENT_SOURCE_DIR}/private/src/*/*.cpp
     )
 endif()
