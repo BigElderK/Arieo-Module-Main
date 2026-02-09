@@ -12,8 +12,12 @@ if(ARIEO_HOST_OS STREQUAL "android")
             ${CMAKE_CURRENT_SOURCE_DIR}/private/src/*.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/private/src/*/*.cpp
         PACKAGES
+            Arieo-Interface-Main
+            Arieo-Interface-Archive
+            Arieo-Interface-Script
             mimalloc
             game-activity
+            Arieo-Core
         INTERFACES
             Arieo-Interface-Main::arieo_main_interface
             Arieo-Interface-Archive::arieo_archive_interface
@@ -36,7 +40,11 @@ else()
             ${CMAKE_CURRENT_SOURCE_DIR}/private/src/*.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/private/src/*/*.cpp
         PACKAGES
+            Arieo-Interface-Main
+            Arieo-Interface-Archive
+            Arieo-Interface-Script
             mimalloc
+            Arieo-Core
         INTERFACES
             Arieo-Interface-Main::arieo_main_interface
             Arieo-Interface-Archive::arieo_archive_interface
