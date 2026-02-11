@@ -4,7 +4,10 @@ include($ENV{ARIEO_BUILDENV_PACKAGE_INSTALL_FOLDER}/cmake/build_environment.cmak
 project(ArieoEngine)
 
 if(ARIEO_HOST_OS STREQUAL "android")
-    arieo_engine_project(
+    # Check if game-activity is available before building
+    find_package(game-activity QUIET)
+    if(TARGET game-activity::game-activity_static)
+        arieo_engine_project(
         arieo_main_module
         PROJECT_TYPE module
 
@@ -31,7 +34,13 @@ if(ARIEO_HOST_OS STREQUAL "android")
             ${CMAKE_CURRENT_SOURCE_DIR}/private/src/*/*.cpp
     )
     set_target_properties(arieo_main_module PROPERTIES LINK_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -u Java_com_google_androidgamesdk_GameActivity_initializeNativeCode")
+    else()
+        # game-activity not available on Android platform
+        message(STATUS "Arieo-Module-Main: Skipping Android build - game-activity package not found")
+        install(CODE "message(STATUS \"Arieo-Module-Main: game-activity dependency not available\")")
+    endif()
 else()
+    # Non-Android build
     arieo_engine_project(
         arieo_main_module
         PROJECT_TYPE module
