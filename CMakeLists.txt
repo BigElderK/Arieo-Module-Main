@@ -36,8 +36,7 @@ if(ARIEO_HOST_OS STREQUAL "android")
     set_target_properties(arieo_main_module PROPERTIES LINK_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -u Java_com_google_androidgamesdk_GameActivity_initializeNativeCode")
     else()
         # game-activity not available on Android platform
-        message(STATUS "Arieo-Module-Main: Skipping Android build - game-activity package not found")
-        install(CODE "message(STATUS \"Arieo-Module-Main: game-activity dependency not available\")")
+        message(FATAL_ERROR "Arieo-Module-Main: Android build failed - game-activity package not found. Check CMAKE_PREFIX_PATH includes the gradle install folder.")
     endif()
 else()
     # Non-Android build
