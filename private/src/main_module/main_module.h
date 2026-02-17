@@ -7,8 +7,11 @@
 #include "core/thread/thread_pool.h"
 #include "core/coroutine/coroutine.h"
 #include "core/job/job_system.h"
+#include "core/manifest/manifest.h"
+
 #include "interface/main/main_module.h"
 #include "interface/script/script.h"
+
 namespace Arieo
 {
     class MainModule
@@ -18,7 +21,7 @@ namespace Arieo
         MainModule();
         ~MainModule();
 
-        void loadManifest(const std::string& manifest_path) override;
+        void loadManifest(std::string manifest_context) override;
         void enqueueTask(Arieo::Core::Coroutine::Task::Tasklet&& task) override;
 
         void registerTickable(Interface::Main::ITickable*) override;
@@ -28,7 +31,8 @@ namespace Arieo
         Interface::Archive::IArchive* getRootArchive() override;
 
         void* getAppHandle() override;
-        const std::string& getManifestContent() override;
+
+        std::string getManifestContext() override;
 
         void init(void* app_handle);
         void tick();
@@ -39,12 +43,11 @@ namespace Arieo
         Core::ThreadPool m_thread_pool;
         Core::JobSystem m_job_system;
 
-        void loadManifestContent(const std::string& manifest_file_path);
-
         Interface::Archive::IArchive* m_root_archive = nullptr;
         void* m_app_handle = nullptr;
 
-        std::string m_manifest_content;
+        Core::Manifest m_manifest;
+        std::string m_manifest_context;
 
         Interface::Script::IInstance* m_startup_script_instance = nullptr;
     };

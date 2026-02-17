@@ -2,6 +2,8 @@
 #include "core/core.h"
 #include "../main_module/main_module.h"
 #include "../main_memory/main_memory.h"
+#include <fstream>
+
 using namespace Arieo;
 
 #if defined(ARIEO_PLATFORM_ANDROID)
@@ -173,7 +175,21 @@ ARIEO_DLLEXPORT void android_main(android_app *app)
         &g_main_module
     );
 
-    g_main_module.loadManifest(Arieo::Core::SystemUtility::Environment::getEnvironmentValue("APP_MANIFEST_PATH"));
+    // Load manifest context from file path specified by environment variable
+    {
+        std::string app_manifest_path = Arieo::Core::SystemUtility::Environment::getEnvironmentValue("APP_MANIFEST_PATH");
+        std::ifstream manifest_file(app_manifest_path);
+        if (!manifest_file.is_open()) {
+            Core::Logger::error("Failed to open manifest file at path: {}", app_manifest_path);
+            return;
+        }
+
+        std::string manifest_content((std::istreambuf_iterator<char>(manifest_file)),
+                                     std::istreambuf_iterator<char>());
+        manifest_file.close();
+
+        g_main_module.loadManifest(manifest_content);
+    }
     
     while (true)
     {
