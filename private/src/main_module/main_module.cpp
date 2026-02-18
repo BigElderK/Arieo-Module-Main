@@ -24,7 +24,30 @@ namespace Arieo
         for (const auto& module_path : module_paths)        
         {
             Core::Logger::info("Loading Module DymLib: {}", module_path.string());
+            if(module_path.string().find("main_module") != std::string::npos)
+            {
+                continue;
+            }
             Core::ModuleManager::getProcessSingleton().loadModuleLib(module_path.string(), getMainMemoryManager());
+        }
+
+        // Load root archive
+        {
+            Interface::Archive::IArchiveManager* archive_factory = Core::ModuleManager::getInterface<Interface::Archive::IArchiveManager>();
+            if(archive_factory == nullptr)
+            {
+                Core::Logger::fatal("No archive factory module found!");
+            }
+
+            std::filesystem::path content_root_path = Core::SystemUtility::FileSystem::getFormalizedPath(
+                m_manifest.getSystemNode()["environments"]["CONTENT_ROOT"].as<std::string>()
+            );
+
+            m_root_archive = archive_factory->createArchive(content_root_path);
+            if(m_root_archive == nullptr)
+            {
+                Core::Logger::fatal("Failed to create root archive with path: {}", content_root_path.string());
+            }
         }
     }
 
