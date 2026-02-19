@@ -12,13 +12,14 @@ if(ARIEO_HOST_OS STREQUAL "android")
             PROJECT_TYPE module
 
             DEPENDENCIES
-                PACKAGES
+                ARIEO_PACKAGES
+                    Arieo-Core
                     Arieo-Interface-Main
                     Arieo-Interface-Archive
                     Arieo-Interface-Script
+                THIRDPARTY_PACKAGES
                     mimalloc
                     game-activity
-                    Arieo-Core
                 INTERFACES
                     Arieo-Interface-Main::arieo_main_interface
                     Arieo-Interface-Archive::arieo_archive_interface
@@ -32,8 +33,8 @@ if(ARIEO_HOST_OS STREQUAL "android")
 
             SOURCES
                 CXX_SOURCES
-                    ${CMAKE_CURRENT_SOURCE_DIR}/private/src/*.cpp
-                    ${CMAKE_CURRENT_SOURCE_DIR}/private/src/*/*.cpp
+                    ${CMAKE_CURRENT_LIST_DIR}/private/src/*.cpp
+                    ${CMAKE_CURRENT_LIST_DIR}/private/src/*/*.cpp
         )
         set_target_properties(arieo_main_module PROPERTIES LINK_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -u Java_com_google_androidgamesdk_GameActivity_initializeNativeCode")
     else()
@@ -47,12 +48,13 @@ else()
         PROJECT_TYPE module
 
         DEPENDENCIES
-            PACKAGES
+            ARIEO_PACKAGES
+                Arieo-Core
                 Arieo-Interface-Main
                 Arieo-Interface-Archive
                 Arieo-Interface-Script
+            THIRDPARTY_PACKAGES
                 mimalloc
-                Arieo-Core
             INTERFACES
                 Arieo-Interface-Main::arieo_main_interface
                 Arieo-Interface-Archive::arieo_archive_interface
@@ -63,7 +65,7 @@ else()
 
         SOURCES
             CXX_SOURCES
-                ${CMAKE_CURRENT_SOURCE_DIR}/private/src/*.cpp
-                ${CMAKE_CURRENT_SOURCE_DIR}/private/src/*/*.cpp
+                ${CMAKE_CURRENT_LIST_DIR}/private/src/*.cpp
+                ${CMAKE_CURRENT_LIST_DIR}/private/src/*/*.cpp
     )
 endif()
