@@ -1,13 +1,22 @@
 cmake_minimum_required (VERSION 3.31)
 
 include($ENV{ARIEO_BUILD_ENV_PACKAGES_OUTPUT_DIR}/cmake/build_environment.cmake)
-project(ArieoEngine)
+
+ARIEO_PACKAGE(
+    Arieo-Module-Main
+    CATEGORY 02_engine
+    DEPENDS
+        https://github.com/BigElderK/Arieo-Core.git@main
+        https://github.com/BigElderK/Arieo-Interface-Main.git@main
+        https://github.com/BigElderK/Arieo-Interface-Archive.git@main
+        https://github.com/BigElderK/Arieo-Interface-Script.git@main
+)
 
 if(ARIEO_HOST_OS STREQUAL "android")
     # Check if game-activity is available before building
     find_package(game-activity QUIET)
     if(TARGET game-activity::game-activity_static)
-        arieo_engine_project(
+        ARIEO_ENGINE_PROJECT(
             arieo_main_module
             PROJECT_TYPE module
 
@@ -20,11 +29,10 @@ if(ARIEO_HOST_OS STREQUAL "android")
                 THIRDPARTY_PACKAGES
                     mimalloc
                     game-activity
-                INTERFACES
+                PRIVATE_LIBS
                     Arieo-Interface-Main::arieo_main_interface
                     Arieo-Interface-Archive::arieo_archive_interface
                     Arieo-Interface-Script::arieo_script_interface
-                PRIVATE_LIBS
                     Arieo-Core::arieo_core
                     mimalloc::mimalloc
                     game-activity::game-activity_static
@@ -43,7 +51,7 @@ if(ARIEO_HOST_OS STREQUAL "android")
     endif()
 else()
     # Non-Android build
-    arieo_engine_project(
+    ARIEO_ENGINE_PROJECT(
         arieo_main_module
         PROJECT_TYPE module
 
@@ -55,11 +63,10 @@ else()
                 Arieo-Interface-Script
             THIRDPARTY_PACKAGES
                 mimalloc
-            INTERFACES
+            PRIVATE_LIBS
                 Arieo-Interface-Main::arieo_main_interface
                 Arieo-Interface-Archive::arieo_archive_interface
                 Arieo-Interface-Script::arieo_script_interface
-            PRIVATE_LIBS
                 Arieo-Core::arieo_core
                 mimalloc::mimalloc
 
