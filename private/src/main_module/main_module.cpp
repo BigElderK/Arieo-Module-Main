@@ -33,15 +33,31 @@ namespace Arieo
 
         // Load root archive
         {
-            Interface::Archive::IArchiveManager* archive_factory = Core::ModuleManager::getInterface<Interface::Archive::IArchiveManager>();
+            std::filesystem::path content_root_path = Core::SystemUtility::FileSystem::getFormalizedPath(
+                m_manifest.getSystemNode()["environments"]["CONTENT_ROOT"].as<std::string>()
+            );
+
+            if(content_root_path.empty())
+            {
+                Core::Logger::fatal("CONTENT_ROOT is not defined in manifest!");
+            }
+
+            Interface::Archive::IArchiveManager* archive_factory = nullptr;
+            {
+                if (content_root_path.string().ends_with(".obb") || content_root_path.string().ends_with(".zip"))
+                {
+                    archive_factory = Core::ModuleManager::getInterface<Interface::Archive::IArchiveManager>("obb_archive");
+                }
+                else
+                {
+                    archive_factory = Core::ModuleManager::getInterface<Interface::Archive::IArchiveManager>("os_filesystem_archive");
+                }
+            }
+
             if(archive_factory == nullptr)
             {
                 Core::Logger::fatal("No archive factory module found!");
             }
-
-            std::filesystem::path content_root_path = Core::SystemUtility::FileSystem::getFormalizedPath(
-                m_manifest.getSystemNode()["environments"]["CONTENT_ROOT"].as<std::string>()
-            );
 
             m_root_archive = archive_factory->createArchive(content_root_path);
             if(m_root_archive == nullptr)
