@@ -13,7 +13,6 @@ using namespace Arieo;
 #include <fstream>
 #include <string>
 #include <cstdlib>
-#include <jni.h>
 #include <unistd.h>
 
 #define LOG_TAG "ArieoEngine"
@@ -46,30 +45,6 @@ void handle_cmd(android_app *app, int32_t cmd)
 typedef int (*MAIN_ENTRY_INIT_FUN)(void*);
 typedef bool (*MAIN_ENTRY_TICK_FUN)();
 typedef void (*MAIN_ENTRY_DEINIT_FUN)();
-
-// JNI function to set real system environment variables
-extern "C" JNIEXPORT jboolean JNICALL
-Java_com_arieo_bootstrap_MainActivity_nativeSetEnvironmentVariable(JNIEnv *env, jobject /* this */, jstring name, jstring value) {
-    const char *env_name = env->GetStringUTFChars(name, nullptr);
-    const char *env_value = env->GetStringUTFChars(value, nullptr);
-    
-    if (env_name && env_value) {
-        // Set the environment variable using setenv
-        int result = setenv(env_name, env_value, 1); // 1 means overwrite if exists
-        
-        LOGI("Setting environment variable %s = %s", env_name, env_value);
-        
-        env->ReleaseStringUTFChars(name, env_name);
-        env->ReleaseStringUTFChars(value, env_value);
-        
-        return (result == 0) ? JNI_TRUE : JNI_FALSE;
-    }
-    
-    if (env_name) env->ReleaseStringUTFChars(name, env_name);
-    if (env_value) env->ReleaseStringUTFChars(value, env_value);
-    
-    return JNI_FALSE;
-}
 
 static Arieo::MainModule g_main_module;
 ARIEO_DLLEXPORT void android_main(android_app *app)
