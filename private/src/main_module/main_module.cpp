@@ -42,7 +42,7 @@ namespace Arieo
                 Core::Logger::fatal("CONTENT_ROOT is not defined in manifest!");
             }
 
-            Interface::Archive::IArchiveManager* archive_factory = nullptr;
+            Base::Interface<Interface::Archive::IArchiveManager> archive_factory = nullptr;
             {
                 if (content_root_path.string().ends_with(".obb") || content_root_path.string().ends_with(".zip"))
                 {
@@ -69,7 +69,7 @@ namespace Arieo
 
     void MainModule::enqueueTask(Arieo::Core::Coroutine::Task::Tasklet&& task)
     {
-        m_job_system.enqueueTask(std::move(Core::Coroutine::Task(std::move(task))));
+        m_job_system.enqueueTask(Core::Coroutine::Task(std::move(task)));
     }
 
     MainModule::MainModule()
@@ -81,20 +81,20 @@ namespace Arieo
 
     }
 
-    Interface::Archive::IArchive* MainModule::getRootArchive()
+    Base::Interface<Interface::Archive::IArchive> MainModule::getRootArchive()
     {
         return m_root_archive;
     }
 
-    void MainModule::registerTickable(Interface::Main::ITickable* tickable)
+    void MainModule::registerTickable(Base::Interface<Interface::Main::ITickable> tickable)
     {
         m_register_tickable_array.emplace_back(tickable);
         tickable->onInitialize();
     }
 
-    void MainModule::unregisterTickable(Interface::Main::ITickable* tickable)
+    void MainModule::unregisterTickable(Base::Interface<Interface::Main::ITickable> tickable)
     {
-        std::erase_if(m_register_tickable_array, [tickable](Interface::Main::ITickable* register_tickable)
+        std::erase_if(m_register_tickable_array, [tickable](Base::Interface<Interface::Main::ITickable> register_tickable)
         {
             if(register_tickable == tickable)
             {
@@ -135,7 +135,7 @@ namespace Arieo
         std::for_each(
             m_register_tickable_array.begin(), 
             m_register_tickable_array.end(),
-            [](Interface::Main::ITickable* register_tickable)
+            [](Base::Interface<Interface::Main::ITickable> register_tickable)
             {
                 register_tickable->onTick();
             }
@@ -149,7 +149,7 @@ namespace Arieo
         std::for_each(
             m_register_tickable_array.begin(), 
             m_register_tickable_array.end(),
-            [](Interface::Main::ITickable* register_tickable)
+            [](Base::Interface<Interface::Main::ITickable> register_tickable)
             {
                 register_tickable->onDeinitialize();
             }

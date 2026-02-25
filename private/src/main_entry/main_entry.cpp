@@ -9,7 +9,9 @@ using namespace Arieo;
 static Arieo::MainModule g_main_module;
 ARIEO_DLLEXPORT int MainEntry(void* app)
 {
-    Base::Memory::MemoryManager::initialize(g_main_module.getMainMemoryManager());
+    Base::Memory::MemoryManager::initialize(
+        g_main_module.getMainMemoryManager()
+    );
     Core::Logger::setDefaultLogger("main");
     
     Core::Logger::info("Main module initializing.");
