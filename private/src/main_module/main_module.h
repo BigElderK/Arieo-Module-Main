@@ -22,34 +22,34 @@ namespace Arieo
         MainModule();
         ~MainModule();
 
-        void loadManifest(std::string manifest_context) override;
+        void loadManifest(const Base::Interop<std::string_view>& manifest_context) override;
         void enqueueTask(Arieo::Core::Coroutine::Task::Tasklet&& task) override;
 
-        void registerTickable(Base::Interface<Interface::Main::ITickable>) override;
-        void unregisterTickable(Base::Interface<Interface::Main::ITickable>) override;
+        void registerTickable(Base::Interop<Interface::Main::ITickable>) override;
+        void unregisterTickable(Base::Interop<Interface::Main::ITickable>) override;
 
         Base::Memory::MemoryManager* getMainMemoryManager() override;
-        Base::Interface<Interface::Archive::IArchive> getRootArchive() override;
+        Base::Interop<Interface::Archive::IArchive> getRootArchive() override;
 
         void* getAppHandle() override;
 
-        std::string getManifestContext() override;
+        Base::Interop<std::string_view> getManifestContext() override;
 
         void init(void* app_handle);
         void tick();
         void deinit();
     protected:
-        std::vector<Base::Interface<Interface::Main::ITickable>> m_register_tickable_array;
+        std::vector<Base::Interop<Interface::Main::ITickable>> m_register_tickable_array;
 
         Core::ThreadPool m_thread_pool;
         Core::JobSystem m_job_system;
 
-        Base::Interface<Interface::Archive::IArchive> m_root_archive = nullptr;
+        Base::Interop<Interface::Archive::IArchive> m_root_archive = nullptr;
         void* m_app_handle = nullptr;
 
         Core::Manifest m_manifest;
         std::string m_manifest_context;
 
-        Base::Interface<Interface::Script::IInstance> m_startup_script_instance = nullptr;
+        Base::Interop<Interface::Script::IInstance> m_startup_script_instance = nullptr;
     };
 }
