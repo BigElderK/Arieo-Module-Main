@@ -59,7 +59,7 @@ namespace Arieo
                 Core::Logger::fatal("No archive factory module found!");
             }
 
-            m_root_archive = archive_factory->createArchive(content_root_path.string());
+            m_root_archive = archive_factory->createArchive(Base::Interop::StringView(content_root_path.string()));
             if(m_root_archive == nullptr)
             {
                 Core::Logger::fatal("Failed to create root archive with path: {}", content_root_path.string());
