@@ -8,7 +8,7 @@
 #include "core/coroutine/coroutine.h"
 #include "core/job/job_system.h"
 #include "core/manifest/manifest.h"
-#include "base/interface/interface.h"
+#include "base/interop/interface.h"
 
 #include "interface/main/main_module.h"
 #include "interface/script/script.h"
