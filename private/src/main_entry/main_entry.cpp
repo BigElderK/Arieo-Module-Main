@@ -35,7 +35,7 @@ ARIEO_DLLEXPORT int MainEntry(void* app)
                                      std::istreambuf_iterator<char>());
         manifest_file.close();
 
-        g_main_module.loadManifest(std::string_view(manifest_content));
+        g_main_module.loadManifest(manifest_content);
     }
 
     while(true)
@@ -45,3 +45,7 @@ ARIEO_DLLEXPORT int MainEntry(void* app)
     
     g_main_module.deinit();
 }
+
+
+
+

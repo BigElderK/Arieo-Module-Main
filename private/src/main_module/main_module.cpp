@@ -12,9 +12,9 @@ using namespace Arieo;
 
 namespace Arieo
 {
-    void MainModule::loadManifest(const Base::InteropOld<std::string_view>& manifest_context)
+    void MainModule::loadManifest(const std::string& manifest_context)
     {
-        m_manifest_context = manifest_context.getString();
+        m_manifest_context = manifest_context;
         m_manifest.loadFromString(m_manifest_context);
 
         m_manifest.applyPresetEnvironments();
@@ -42,7 +42,7 @@ namespace Arieo
                 Core::Logger::fatal("CONTENT_ROOT is not defined in manifest!");
             }
 
-            Base::InteropOld<Interface::Archive::IArchiveManager> archive_factory = nullptr;
+            Base::Interop::RawRef<Interface::Archive::IArchiveManager> archive_factory = nullptr;
             {
                 if (content_root_path.string().ends_with(".obb") || content_root_path.string().ends_with(".zip"))
                 {
@@ -59,7 +59,7 @@ namespace Arieo
                 Core::Logger::fatal("No archive factory module found!");
             }
 
-            m_root_archive = archive_factory->createArchive(std::string_view(content_root_path.string()));
+            m_root_archive = archive_factory->createArchive(content_root_path.string());
             if(m_root_archive == nullptr)
             {
                 Core::Logger::fatal("Failed to create root archive with path: {}", content_root_path.string());
@@ -86,15 +86,15 @@ namespace Arieo
         return m_root_archive;
     }
 
-    void MainModule::registerTickable(Base::InteropOld<Interface::Main::ITickable> tickable)
+    void MainModule::registerTickable(Base::Interop::RawRef<Interface::Main::ITickable> tickable)
     {
         m_register_tickable_array.emplace_back(tickable);
         tickable->onInitialize();
     }
 
-    void MainModule::unregisterTickable(Base::InteropOld<Interface::Main::ITickable> tickable)
+    void MainModule::unregisterTickable(Base::Interop::RawRef<Interface::Main::ITickable> tickable)
     {
-        std::erase_if(m_register_tickable_array, [tickable](Base::InteropOld<Interface::Main::ITickable> register_tickable)
+        std::erase_if(m_register_tickable_array, [tickable](Base::Interop::RawRef<Interface::Main::ITickable> register_tickable)
         {
             if(register_tickable == tickable)
             {
@@ -135,7 +135,7 @@ namespace Arieo
         std::for_each(
             m_register_tickable_array.begin(), 
             m_register_tickable_array.end(),
-            [](Base::InteropOld<Interface::Main::ITickable> register_tickable)
+            [](Base::Interop::RawRef<Interface::Main::ITickable> register_tickable)
             {
                 register_tickable->onTick();
             }
@@ -149,7 +149,7 @@ namespace Arieo
         std::for_each(
             m_register_tickable_array.begin(), 
             m_register_tickable_array.end(),
-            [](Base::InteropOld<Interface::Main::ITickable> register_tickable)
+            [](Base::Interop::RawRef<Interface::Main::ITickable> register_tickable)
             {
                 register_tickable->onDeinitialize();
             }
@@ -167,8 +167,12 @@ namespace Arieo
         return m_app_handle;
     }
 
-    Base::InteropOld<std::string_view> MainModule::getManifestContext()
+    std::string MainModule::getManifestContext()
     {
-        return Base::InteropOld<std::string_view>(std::string_view(m_manifest_context));
+        return std::string(std::string_view(m_manifest_context));
     }
 }
+
+
+
+

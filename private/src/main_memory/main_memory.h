@@ -7,3 +7,7 @@ namespace Arieo
         static Base::Memory::MemoryManager* getMainMemoryManager();
     };
 }
+
+
+
+
