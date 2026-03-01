@@ -12,6 +12,9 @@ ARIEO_DLLEXPORT int MainEntry(void* app)
     Base::Memory::MemoryManager::initialize(
         g_main_module.getMainMemoryManager()
     );
+
+    Arieo::Base::Interop::SharedRef<Interface::Main::IMainModule> main_module_interface = Base::Interop::makePersistentShared<Interface::Main::IMainModule>(g_main_module);
+
     Core::Logger::setDefaultLogger("main");
     
     Core::Logger::info("Main module initializing.");
@@ -19,7 +22,7 @@ ARIEO_DLLEXPORT int MainEntry(void* app)
     
     Core::ModuleManager::registerInterface<Interface::Main::IMainModule>(
         "main_module",
-        &g_main_module
+        main_module_interface
     );
 
     // Load manifest context from file path specified by environment variable

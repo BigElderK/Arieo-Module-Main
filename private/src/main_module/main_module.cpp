@@ -28,7 +28,7 @@ namespace Arieo
             {
                 continue;
             }
-            Core::ModuleManager::getProcessSingleton().loadModuleLib(module_path.string(), getMainMemoryManager());
+            Core::ModuleManager::getProcessSingleton().loadModuleLib(std::string_view(module_path.string()), getMainMemoryManager());
         }
 
         // Load root archive
@@ -42,7 +42,7 @@ namespace Arieo
                 Core::Logger::fatal("CONTENT_ROOT is not defined in manifest!");
             }
 
-            Base::Interop::RawRef<Interface::Archive::IArchiveManager> archive_factory = nullptr;
+            Base::Interop::SharedRef<Interface::Archive::IArchiveManager> archive_factory = nullptr;
             {
                 if (content_root_path.string().ends_with(".obb") || content_root_path.string().ends_with(".zip"))
                 {
@@ -86,19 +86,25 @@ namespace Arieo
         return m_root_archive;
     }
 
-    void MainModule::registerTickable(Base::Interop::RawRef<Interface::Main::ITickable> tickable)
+    void MainModule::registerTickable(Base::Interop::WeakRef<Interface::Main::ITickable> tickable)
     {
         m_register_tickable_array.emplace_back(tickable);
-        tickable->onInitialize();
+        if (auto tickable_ptr = tickable.lock())
+        {
+            tickable_ptr->onInitialize();
+        }
     }
 
-    void MainModule::unregisterTickable(Base::Interop::RawRef<Interface::Main::ITickable> tickable)
+    void MainModule::unregisterTickable(Base::Interop::WeakRef<Interface::Main::ITickable> tickable)
     {
-        std::erase_if(m_register_tickable_array, [tickable](Base::Interop::RawRef<Interface::Main::ITickable> register_tickable)
+        std::erase_if(m_register_tickable_array, [tickable](Base::Interop::WeakRef<Interface::Main::ITickable>& register_tickable)
         {
             if(register_tickable == tickable)
             {
-                register_tickable->onDeinitialize();
+                if (auto tickable_ptr = register_tickable.lock())
+                {
+                    tickable_ptr->onDeinitialize();
+                }
                 return true;
             }
             else
@@ -132,12 +138,16 @@ namespace Arieo
         // job_finished.wait();
         m_job_system.updateOneFrame();
 
-        std::for_each(
-            m_register_tickable_array.begin(), 
-            m_register_tickable_array.end(),
-            [](Base::Interop::RawRef<Interface::Main::ITickable> register_tickable)
+        std::erase_if(
+            m_register_tickable_array,
+            [](Base::Interop::WeakRef<Interface::Main::ITickable>& register_tickable)
             {
-                register_tickable->onTick();
+                if (auto tickable_ptr = register_tickable.lock())
+                {
+                    tickable_ptr->onTick();
+                    return false;
+                }
+                return true;
             }
         );
 
@@ -149,9 +159,12 @@ namespace Arieo
         std::for_each(
             m_register_tickable_array.begin(), 
             m_register_tickable_array.end(),
-            [](Base::Interop::RawRef<Interface::Main::ITickable> register_tickable)
+            [](Base::Interop::WeakRef<Interface::Main::ITickable> register_tickable)
             {
-                register_tickable->onDeinitialize();
+                if (auto tickable_ptr = register_tickable.lock())
+                {
+                    tickable_ptr->onDeinitialize();
+                }
             }
         );
         m_register_tickable_array.clear();

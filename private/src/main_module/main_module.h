@@ -15,7 +15,7 @@
 
 namespace Arieo
 {
-    class MainModule
+    class MainModule final
         : public Interface::Main::IMainModule
     {        
     public:
@@ -25,8 +25,8 @@ namespace Arieo
         void loadManifest(const std::string& manifest_context) override;
         void enqueueTask(Arieo::Core::Coroutine::Task::Tasklet&& task) override;
 
-        void registerTickable(Base::Interop::RawRef<Interface::Main::ITickable>) override;
-        void unregisterTickable(Base::Interop::RawRef<Interface::Main::ITickable>) override;
+        void registerTickable(Base::Interop::WeakRef<Interface::Main::ITickable>) override;
+        void unregisterTickable(Base::Interop::WeakRef<Interface::Main::ITickable>) override;
 
         Base::Memory::MemoryManager* getMainMemoryManager() override;
         Base::Interop::SharedRef<Interface::Archive::IArchive> getRootArchive() override;
@@ -39,7 +39,7 @@ namespace Arieo
         void tick();
         void deinit();
     protected:
-        std::vector<Base::Interop::RawRef<Interface::Main::ITickable>> m_register_tickable_array;
+        std::vector<Base::Interop::WeakRef<Interface::Main::ITickable>> m_register_tickable_array;
 
         Core::ThreadPool m_thread_pool;
         Core::JobSystem m_job_system;
