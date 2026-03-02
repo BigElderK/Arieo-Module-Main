@@ -22,18 +22,18 @@ namespace Arieo
         MainModule();
         ~MainModule();
 
-        void loadManifest(const std::string& manifest_context) override;
+        void loadManifest(const Base::Interop::StringView& manifest_context) override;
         void enqueueTask(Arieo::Core::Coroutine::Task::Tasklet&& task) override;
 
-        void registerTickable(Base::Interop::WeakRef<Interface::Main::ITickable>) override;
-        void unregisterTickable(Base::Interop::WeakRef<Interface::Main::ITickable>) override;
+        void registerTickable(const Base::Interop::WeakRef<Interface::Main::ITickable>& tickable) override;
+        void unregisterTickable(const Base::Interop::WeakRef<Interface::Main::ITickable>& tickable) override;
 
         Base::Memory::MemoryManager* getMainMemoryManager() override;
         Base::Interop::SharedRef<Interface::Archive::IArchive> getRootArchive() override;
 
         void* getAppHandle() override;
 
-        std::string getManifestContext() override;
+        const char* getManifestContext() override;
 
         void init(void* app_handle);
         void tick();

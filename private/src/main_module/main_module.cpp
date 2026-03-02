@@ -12,9 +12,9 @@ using namespace Arieo;
 
 namespace Arieo
 {
-    void MainModule::loadManifest(const std::string& manifest_context)
+    void MainModule::loadManifest(const Base::Interop::StringView& manifest_context)
     {
-        m_manifest_context = manifest_context;
+        m_manifest_context = manifest_context.getString();
         m_manifest.loadFromString(m_manifest_context);
 
         m_manifest.applyPresetEnvironments();
@@ -86,7 +86,7 @@ namespace Arieo
         return m_root_archive;
     }
 
-    void MainModule::registerTickable(Base::Interop::WeakRef<Interface::Main::ITickable> tickable)
+    void MainModule::registerTickable(const Base::Interop::WeakRef<Interface::Main::ITickable>& tickable)
     {
         m_register_tickable_array.emplace_back(tickable);
         if (auto tickable_ptr = tickable.lock())
@@ -95,7 +95,7 @@ namespace Arieo
         }
     }
 
-    void MainModule::unregisterTickable(Base::Interop::WeakRef<Interface::Main::ITickable> tickable)
+    void MainModule::unregisterTickable(const Base::Interop::WeakRef<Interface::Main::ITickable>& tickable)
     {
         std::erase_if(m_register_tickable_array, [tickable](Base::Interop::WeakRef<Interface::Main::ITickable>& register_tickable)
         {
@@ -180,9 +180,9 @@ namespace Arieo
         return m_app_handle;
     }
 
-    std::string MainModule::getManifestContext()
+    const char* MainModule::getManifestContext()
     {
-        return std::string(std::string_view(m_manifest_context));
+        return m_manifest_context.c_str();
     }
 }
 
