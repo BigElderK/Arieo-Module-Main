@@ -49,6 +49,28 @@ if(ARIEO_HOST_OS STREQUAL "android")
         # game-activity not available on Android platform
         message(FATAL_ERROR "Arieo-Module-Main: Android build failed - game-activity package not found. Check CMAKE_PREFIX_PATH includes the gradle install folder.")
     endif()
+elseif(ARIEO_HOST_OS STREQUAL "emscripten")
+    # Non-Android build
+    ARIEO_ENGINE_PROJECT(
+        arieo_main_module
+        PROJECT_TYPE module
+
+        DEPENDENCIES
+            ARIEO_PACKAGES
+                Arieo-Core
+                Arieo-Interface-Main
+                Arieo-Interface-Archive
+                Arieo-Interface-Script
+            PRIVATE_LIBS
+                Arieo-Interface-Main::arieo_main_interface
+                Arieo-Interface-Archive::arieo_archive_interface
+                Arieo-Interface-Script::arieo_script_interface
+                Arieo-Core::arieo_core
+        SOURCES
+            CXX_SOURCES
+                ${CMAKE_CURRENT_LIST_DIR}/private/src/*.cpp
+                ${CMAKE_CURRENT_LIST_DIR}/private/src/*/*.cpp
+    )
 else()
     # Non-Android build
     ARIEO_ENGINE_PROJECT(
