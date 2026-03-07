@@ -51,6 +51,10 @@ if(ARIEO_HOST_OS STREQUAL "android")
     endif()
 elseif(ARIEO_HOST_OS STREQUAL "emscripten")
     # Non-Android build
+    # Note: mimalloc is NOT linked here — main_memory.cpp uses aligned_alloc on
+    # Emscripten. Linking mimalloc would inject static constructors that call
+    # emmalloc_free/emmalloc_memalign during __wasm_call_ctors, which resolve to
+    # undefined stubs at dlopen time and crash the promise, causing silent null returns.
     ARIEO_ENGINE_PROJECT(
         arieo_main_module
         PROJECT_TYPE module
@@ -61,14 +65,11 @@ elseif(ARIEO_HOST_OS STREQUAL "emscripten")
                 Arieo-Interface-Main
                 Arieo-Interface-Archive
                 Arieo-Interface-Script
-            # THIRDPARTY_PACKAGES
-                # mimalloc
             PRIVATE_LIBS
                 Arieo-Interface-Main::arieo_main_interface
                 Arieo-Interface-Archive::arieo_archive_interface
                 Arieo-Interface-Script::arieo_script_interface
                 Arieo-Core::arieo_core
-                # mimalloc::mimalloc
         SOURCES
             CXX_SOURCES
                 ${CMAKE_CURRENT_LIST_DIR}/private/src/*.cpp
