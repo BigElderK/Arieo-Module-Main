@@ -1,12 +1,36 @@
 #include "base/prerequisites.h"
 #include "main_memory.h"
 
+#if defined(ARIEO_PLATFORM_EMSCRIPTEN)
+#include <cstdlib>
+#include <cstring>
+#else
 #include <mimalloc.h>
 // #include <mimalloc-override.h>
 // #include <mimalloc-new-delete.h>
+#endif
 
 namespace Arieo
 {
+
+#if defined(ARIEO_PLATFORM_EMSCRIPTEN)
+
+    class MiMallocMemoryAllocator
+        : public Base::Memory::IAllocator
+    {
+    public:
+        void* allocate(size_t bytes, size_t alignment) override
+        {
+            return ::aligned_alloc(alignment, bytes);
+        }
+
+        void deallocate(void* p, size_t bytes, size_t alignment) override
+        {
+            ::free(p);
+        }
+    };
+
+#else
 
     class MiMallocMemoryAllocator
         : public Base::Memory::IAllocator
@@ -34,6 +58,8 @@ namespace Arieo
             mi_free(p);
         }
     };
+
+#endif
 
     Base::Memory::MemoryManager* MainMemory::getMainMemoryManager()
     {

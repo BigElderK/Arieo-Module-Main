@@ -61,11 +61,14 @@ elseif(ARIEO_HOST_OS STREQUAL "emscripten")
                 Arieo-Interface-Main
                 Arieo-Interface-Archive
                 Arieo-Interface-Script
+            # THIRDPARTY_PACKAGES
+                # mimalloc
             PRIVATE_LIBS
                 Arieo-Interface-Main::arieo_main_interface
                 Arieo-Interface-Archive::arieo_archive_interface
                 Arieo-Interface-Script::arieo_script_interface
                 Arieo-Core::arieo_core
+                # mimalloc::mimalloc
         SOURCES
             CXX_SOURCES
                 ${CMAKE_CURRENT_LIST_DIR}/private/src/*.cpp
